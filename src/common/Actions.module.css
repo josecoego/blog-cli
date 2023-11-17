@@ -1,0 +1,8 @@
+.actionsMain {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  height: 100px;
+  z-index: 10000;
+  background-color: #3f50b5;
+}

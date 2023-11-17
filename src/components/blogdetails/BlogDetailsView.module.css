@@ -10,3 +10,10 @@
   font-size: 1.8em;
   font-weight: bold;
 }
+
+.blogDetailsViewDefaultActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 40px;
+}
