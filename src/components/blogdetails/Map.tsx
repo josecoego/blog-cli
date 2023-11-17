@@ -5,7 +5,18 @@ interface MapContainerProps extends IMapProps {
   google: any; // El tipo de google podría variar, asegúrate de manejarlo de manera adecuada
 }
 
-const MapContainer = (props: MapContainerProps & { name: string }) => {
+export type MapCustomProps = {
+  lat: number;
+  lng: number;
+  onChangePos: ({ lat, lng }: { lat: number; lng: number }) => void;
+};
+
+const MapContainer = ({
+  lat,
+  lng,
+  onChangePos,
+  ...props
+}: MapContainerProps & MapCustomProps) => {
   const mapStyles: React.CSSProperties = {
     position: "relative",
     height: "400px",
@@ -15,8 +26,8 @@ const MapContainer = (props: MapContainerProps & { name: string }) => {
   };
 
   const initialPosition = {
-    lat: 37.7749, // Latitud
-    lng: -122.4194, // Longitud
+    lat, // Latitud
+    lng, // Longitud
   };
 
   return (
@@ -28,8 +39,10 @@ const MapContainer = (props: MapContainerProps & { name: string }) => {
         style={mapStyles}
         initialCenter={initialPosition}
         onClick={(mapProps: any, map: any, clickEvent: any) => {
-          console.log(clickEvent.latLng.lat(), clickEvent.latLng.lng()); // Aquí obtienes la posición donde se hizo clic en el mapa
-          // Puedes hacer lo que desees con la posición obtenida, como mostrar un marcador adicional, etc.
+          onChangePos({
+            lat: clickEvent.latLng.lat(),
+            lng: clickEvent.latLng.lng(),
+          });
         }}
       >
         <Marker
