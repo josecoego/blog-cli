@@ -1,0 +1,16 @@
+.blogListViewMain {
+  text-align: center;
+  padding: 0px 60px;
+}
+
+.blogListViewTitle {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.blogListViewContent {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 20px;
+}

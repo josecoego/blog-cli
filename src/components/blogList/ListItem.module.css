@@ -1,0 +1,39 @@
+.blogListViewMain {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+
+  flex-direction: column;
+  width: 350px;
+}
+.blogListViewContentItemImg {
+  cursor: pointer;
+}
+.blogListViewContentItem {
+  flex-grow: 1;
+  border: 1px solid #000;
+  box-sizing: border-box;
+  height: 180px;
+}
+.blogListViewContentItemTitle {
+  flex-basis: 40%;
+  justify-content: center;
+  display: flex;
+  font-weight: bold;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.blogListViewContentItemActions {
+  flex-basis: 25%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  padding: 10px;
+}
+
+.blogListViewContentItemButton {
+  margin-right: 10px;
+  cursor: pointer;
+  z-index: 100;
+}
