@@ -1,4 +1,5 @@
 import styles from "./ListItem.module.css";
+import buttonStyles from "../../common/styles/Button.module.css";
 export type ListItemProps = {
   imageSrc: string;
   title: string;
@@ -10,6 +11,7 @@ const ListItem = ({ imageSrc, title, onClick }: ListItemProps) => {
     <div className={styles.blogListViewMain}>
       <img
         onClick={() => onClick("view")}
+        style={{ borderRadius: "7px 7px 0px 0px" }}
         src={imageSrc}
         alt="Image"
         className={`${styles.blogListViewContentItem} ${styles.blogListViewContentItemImg}`}
@@ -23,15 +25,21 @@ const ListItem = ({ imageSrc, title, onClick }: ListItemProps) => {
       </div>
       <div
         className={`${styles.blogListViewContentItem} ${styles.blogListViewContentItemActions}`}
-        style={{}}
+        style={{ borderRadius: "0px 0px 7px 7px" }}
       >
         <button
-          className={styles.blogListViewContentItemButton}
+          className={`${styles.blogListViewContentItemButton} ${buttonStyles.btnSecondary}`}
+          style={{ color: "#9ea6d7", textDecoration: "underline" }}
           onClick={() => onClick("remove")}
         >
           Remove
         </button>
-        <button onClick={() => onClick("edit")}>Edit</button>
+        <button
+          className={buttonStyles.btnPrimary}
+          onClick={() => onClick("edit")}
+        >
+          Edit
+        </button>
       </div>
     </div>
   );

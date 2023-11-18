@@ -11,7 +11,7 @@
 }
 .blogListViewContentItem {
   flex-grow: 1;
-  border: 1px solid #000;
+  border: 1px solid #9ea6d7;
   box-sizing: border-box;
   height: 180px;
 }

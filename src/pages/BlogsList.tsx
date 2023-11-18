@@ -9,6 +9,7 @@ import config from "../common/config.json";
 import { handleError } from "../common/utils";
 import UserFeedback, { UserFeedbackTypes } from "../common/UserFeedback";
 import Actions from "../common/Actions";
+import buttonStyles from "../common/styles/Button.module.css";
 
 const DEFAULT_STATE = {
   loading: false,
@@ -108,12 +109,18 @@ const BlogsList = () => {
     <>
       <div className={styles.blogListViewMain}>
         <button
-          className={styles.blogListViewAddButton}
+          className={`${styles.blogListViewAddButton} ${buttonStyles.btnPrimary}`}
+          style={{ padding: "15px", border: "1px solid", fontSize: "1.1em" }}
           onClick={(e) => navigate("/details/0/edit")}
         >
           + New Post
         </button>
-        <div className={styles.blogListViewTitle}>BLOGS LIST</div>
+        <div
+          className={styles.blogListViewTitle}
+          style={{ marginBottom: "20px" }}
+        >
+          BLOGS LIST
+        </div>
         <div className={styles.blogListViewContent}>
           {currenState === "SUCESS" &&
             (state?.results as BlogData[] | null)?.map((blog: BlogData) => {
