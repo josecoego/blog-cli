@@ -1,5 +1,5 @@
 import { Action } from "@remix-run/router";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Actions from "../../common/Actions";
@@ -37,7 +37,9 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
   const navigate = useNavigate();
   const [state, setState] = useState(DEFAULT_STATE);
   const [errors, setErrors] = useState(DEFAULT_ERROR_STATE);
+  const [operationFeedback, setOperationFeedback] = useState("");
   useEffect(() => {
+    if (id === "0") return;
     async function getPost() {
       try {
         const response = await axios.get(
@@ -85,7 +87,6 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
       isValid = false;
       setErrors((prevErr) => ({
         ...prevErr,
-
         content: "Content is required",
       }));
     }
@@ -105,6 +106,37 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
     }
 
     if (!isValid) return;
+
+    const { loading, error, ...stateToSave } = state;
+    if (id === "0") {
+      axios
+        .post(`${config.END_POINT}/api/v1/posts`, stateToSave)
+        .then((response) => {
+          setOperationFeedback("Operation successful!");
+          setTimeout(() => {
+            setOperationFeedback("");
+            navigate("/");
+          }, 3000);
+          /* navigate(`/details/${response.data.id}/view`); */
+        })
+        .catch((err) => {
+          handleError(err);
+        });
+    } else {
+      axios
+        .put(`${config.END_POINT}/api/v1/posts/${id}`, stateToSave)
+        .then((response) => {
+          setOperationFeedback("Operation successful!");
+          setTimeout(() => {
+            setOperationFeedback("");
+            navigate("/");
+          }, 3000);
+          /* navigate(`/details/${response.data.id}/view`); */
+        })
+        .catch((err) => {
+          handleError(err);
+        });
+    }
   };
   /* const areCoordValid =
     !isNaN(parseFloat(coord.lat)) && !isNaN(parseFloat(coord.lng)); */
@@ -112,7 +144,6 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
   if (state?.loading) currenState = "LOADING";
   if (!!state?.error) currenState = "ERROR";
 
-  console.log("stateeeeeeeeDittttt", state);
   return (
     <>
       {currenState === "SUCESS" && (
@@ -152,18 +183,20 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
               width={"800px"}
             />
           </div>
-          <textarea
-            placeholder="Insert description (*)"
-            style={{ width: "800px", marginBottom: "30px" }}
-            rows={7}
-            onChange={(e) =>
-              setState((prevState) => ({
-                ...prevState,
-                content: e.target.value,
-              }))
-            }
-            value={state.content}
-          ></textarea>
+          <div>
+            <textarea
+              placeholder="Insert description (*)"
+              style={{ width: "800px", marginBottom: "30px" }}
+              rows={7}
+              onChange={(e) =>
+                setState((prevState) => ({
+                  ...prevState,
+                  content: e.target.value,
+                }))
+              }
+              value={state.content}
+            ></textarea>
+          </div>
           {errors.content !== "" && (
             <UserFeedback
               type={UserFeedbackTypes.ERROR}
@@ -226,6 +259,20 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
       )}
 
       <Actions classMain={styles.blogDetailsViewDefaultActions} show={true}>
+        {operationFeedback !== "" && (
+          <div
+            style={{
+              flexBasis: "100%",
+              textAlign: "center",
+              padding: "5px",
+            }}
+          >
+            <UserFeedback
+              type={UserFeedbackTypes.SUCCESS}
+              message={operationFeedback}
+            />
+          </div>
+        )}
         <button onClick={(e) => handleClickSave()}>Save</button>
         <button onClick={(e) => navigate("/")}>Cancel/Back</button>
       </Actions>

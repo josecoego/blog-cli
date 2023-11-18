@@ -65,6 +65,12 @@ const BlogsList = () => {
 
   return (
     <div className={styles.blogListViewMain}>
+      <button
+        className={styles.blogListViewAddButton}
+        onClick={(e) => navigate("/details/0/edit")}
+      >
+        + New Post
+      </button>
       <div className={styles.blogListViewTitle}>BLOGS LIST</div>
       <div className={styles.blogListViewContent}>
         {currenState === "SUCESS" &&

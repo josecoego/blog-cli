@@ -14,3 +14,9 @@
   flex-wrap: wrap;
   gap: 20px;
 }
+
+.blogListViewAddButton {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
