@@ -6,6 +6,7 @@ import Actions from "../../common/Actions";
 import { BlogData } from "../../common/blog";
 import { handleError } from "../../common/utils";
 import styles from "./BlogDetailsView.module.css";
+import buttonStyles from "../../common/styles/Button.module.css";
 import Map from "./Map";
 import config from "../../common/config.json";
 import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
@@ -273,8 +274,18 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
             />
           </div>
         )}
-        <button onClick={(e) => handleClickSave()}>Save</button>
-        <button onClick={(e) => navigate("/")}>Cancel/Back</button>
+        <button
+          className={buttonStyles.btnSecondary}
+          onClick={(e) => navigate("/")}
+        >
+          Cancel/Back
+        </button>
+        <button
+          className={buttonStyles.btnPrimary}
+          onClick={(e) => handleClickSave()}
+        >
+          Save
+        </button>
       </Actions>
     </>
   );

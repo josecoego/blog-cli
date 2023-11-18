@@ -9,6 +9,7 @@ import Map from "./Map";
 import config from "../../common/config.json";
 import { useNavigate } from "react-router-dom";
 import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
+import buttonStyles from "../../common/styles/Button.module.css";
 
 export type BlogDetailsViewProps = {
   id: string;
@@ -113,8 +114,18 @@ const BlogDetailsView = ({ id, ...props }: BlogDetailsViewProps) => {
         />
       )}
       <Actions classMain={styles.blogDetailsViewDefaultActions} show={true}>
-        <button onClick={(e) => navigate("/")}>Back</button>
-        <button onClick={(e) => navigate(`/details/${id}/edit`)}>Edit</button>
+        <button
+          className={buttonStyles.btnSecondary}
+          onClick={(e) => navigate("/")}
+        >
+          Back
+        </button>
+        <button
+          className={buttonStyles.btnPrimary}
+          onClick={(e) => navigate(`/details/${id}/edit`)}
+        >
+          Edit
+        </button>
       </Actions>
     </>
   );

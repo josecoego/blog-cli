@@ -1,0 +1,16 @@
+.btnPrimary {
+  border: none;
+  padding: 7px;
+  border-radius: 10px;
+  color: rgb(112 125 207);
+  font-weight: bold;
+}
+
+.btnSecondary {
+  padding: 7px;
+  border-radius: 10px;
+  background-color: transparent;
+  color: white;
+  font-weight: bold;
+  border: 1px solid white;
+}
