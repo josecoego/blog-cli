@@ -1,15 +1,16 @@
-import { Action } from "@remix-run/router";
-import axios, { AxiosResponse } from "axios";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+import config from "../../common/config.json";
+
 import Actions from "../../common/Actions";
-import { BlogData } from "../../common/blog";
 import { handleError } from "../../common/utils";
+import Map from "./Map";
+import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
+
 import styles from "./BlogDetailsView.module.css";
 import buttonStyles from "../../common/styles/Button.module.css";
-import Map from "./Map";
-import config from "../../common/config.json";
-import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
 
 export type BlogDetailsEditProps = {
   id: string;
@@ -33,12 +34,17 @@ const DEFAULT_ERROR_STATE = {
   long: "",
 };
 
+const DEFAULT_QUERY_FEEDBACK = {
+  type: UserFeedbackTypes.SUCCESS,
+  message: "",
+};
+
 const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
-  /*  const [coord, setCoord] = useState({ lat: "37.7749", lng: "-122.4194" }); */
   const navigate = useNavigate();
   const [state, setState] = useState(DEFAULT_STATE);
   const [errors, setErrors] = useState(DEFAULT_ERROR_STATE);
-  const [operationFeedback, setOperationFeedback] = useState("");
+  const [queryFeedback, setQueryFeedback] = useState(DEFAULT_QUERY_FEEDBACK);
+
   useEffect(() => {
     if (id === "0") return;
     async function getPost() {
@@ -55,7 +61,6 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
     setState((prevState) => ({ ...prevState, loading: true }));
     getPost()
       .then((data) => {
-        console.log("dataaaaaaa", data);
         setState((prevState) => ({
           ...prevState,
           ...data,
@@ -71,7 +76,7 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
           error: err,
         }));
       });
-  }, []);
+  }, [id]);
 
   const handleClickSave = () => {
     setErrors(DEFAULT_ERROR_STATE);
@@ -80,7 +85,6 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
       isValid = false;
       setErrors((prevErr) => ({
         ...prevErr,
-
         title: "Title is required",
       }));
     }
@@ -113,9 +117,12 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
       axios
         .post(`${config.END_POINT}/api/v1/posts`, stateToSave)
         .then((response) => {
-          setOperationFeedback("Operation successful!");
+          setQueryFeedback({
+            type: UserFeedbackTypes.SUCCESS,
+            message: "Operation successful!",
+          });
           setTimeout(() => {
-            setOperationFeedback("");
+            setQueryFeedback(DEFAULT_QUERY_FEEDBACK);
             navigate("/");
           }, 3000);
           /* navigate(`/details/${response.data.id}/view`); */
@@ -126,21 +133,26 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
     } else {
       axios
         .put(`${config.END_POINT}/api/v1/posts/${id}`, stateToSave)
-        .then((response) => {
-          setOperationFeedback("Operation successful!");
+        .then((_res) => {
+          setQueryFeedback({
+            type: UserFeedbackTypes.SUCCESS,
+            message: "Operation successful!",
+          });
           setTimeout(() => {
-            setOperationFeedback("");
+            setQueryFeedback(DEFAULT_QUERY_FEEDBACK);
             navigate("/");
-          }, 3000);
-          /* navigate(`/details/${response.data.id}/view`); */
+          }, 2000);
         })
         .catch((err) => {
+          setQueryFeedback({
+            type: UserFeedbackTypes.ERROR,
+            message: "Operation failed!",
+          });
           handleError(err);
         });
     }
   };
-  /* const areCoordValid =
-    !isNaN(parseFloat(coord.lat)) && !isNaN(parseFloat(coord.lng)); */
+
   let currenState = "SUCESS";
   if (state?.loading) currenState = "LOADING";
   if (!!state?.error) currenState = "ERROR";
@@ -285,7 +297,7 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
       )}
 
       <Actions classMain={styles.blogDetailsViewDefaultActions} show={true}>
-        {operationFeedback !== "" && (
+        {queryFeedback.message !== "" && (
           <div
             style={{
               flexBasis: "100%",
@@ -294,8 +306,8 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
             }}
           >
             <UserFeedback
-              type={UserFeedbackTypes.SUCCESS}
-              message={operationFeedback}
+              type={queryFeedback.type}
+              message={queryFeedback.message}
             />
           </div>
         )}

@@ -2,7 +2,7 @@ import React from "react";
 import { Map, GoogleApiWrapper, Marker, IMapProps } from "google-maps-react";
 
 interface MapContainerProps extends IMapProps {
-  google: any; // El tipo de google podría variar, asegúrate de manejarlo de manera adecuada
+  google: any;
 }
 
 export type MapCustomProps = {
@@ -25,19 +25,6 @@ const MapContainer = ({
   onChangePos,
   ...props
 }: MapContainerProps & MapCustomProps) => {
-  const mapStyles: React.CSSProperties = {
-    position: "relative",
-    height: "100px",
-    width: "200px",
-    top: "0px",
-    left: "-400px",
-  };
-
-  const initialPosition = {
-    lat, // Latitud
-    lng, // Longitud
-  };
-
   return (
     <>
       {/*//@ts-ignore*/}
@@ -45,8 +32,11 @@ const MapContainer = ({
         google={props.google}
         zoom={14}
         style={styles}
-        initialCenter={initialPosition}
-        onClick={(mapProps: any, map: any, clickEvent: any) => {
+        initialCenter={{
+          lat,
+          lng,
+        }}
+        onClick={(_mapProps: any, _map: any, clickEvent: any) => {
           onChangePos({
             lat: clickEvent.latLng.lat(),
             lng: clickEvent.latLng.lng(),
@@ -55,7 +45,10 @@ const MapContainer = ({
       >
         <Marker
           //@ts-ignore
-          position={initialPosition}
+          position={{
+            lat,
+            lng,
+          }}
         />
       </Map>
     </>
@@ -63,7 +56,5 @@ const MapContainer = ({
 };
 
 export default GoogleApiWrapper({
-  apiKey: "AIzaSyAUFmxLQlygxkGuhrkiFQsnPTuMo3Gv9WM", // Reemplaza con tu API Key de Google Maps
+  apiKey: "AIzaSyAUFmxLQlygxkGuhrkiFQsnPTuMo3Gv9WM", //This key MUST be set as ENV VAR.!!!!!!!!!!
 })(MapContainer);
-
-//AIzaSyAUFmxLQlygxkGuhrkiFQsnPTuMo3Gv9WM

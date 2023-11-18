@@ -5,8 +5,6 @@ import BlogDetailsView from "../components/blogdetails/BlogDetailsView";
 const BlogDetails = () => {
   const { id, action } = useParams();
 
-  console.log("paramsssssssss", id, action);
-
   if (action === "view") {
     return <BlogDetailsView id={id ?? "0"} />;
   }

@@ -13,7 +13,7 @@ const ListItem = ({ imageSrc, title, onClick }: ListItemProps) => {
         onClick={() => onClick("view")}
         style={{ borderRadius: "7px 7px 0px 0px" }}
         src={imageSrc}
-        alt="Image"
+        alt=""
         className={`${styles.blogListViewContentItem} ${styles.blogListViewContentItemImg}`}
       />
 

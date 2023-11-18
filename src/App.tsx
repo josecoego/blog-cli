@@ -1,6 +1,5 @@
 import React, { Suspense } from "react";
-import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
-import BlogDetails from "./pages/BlogDetails";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import BlogsList from "./pages/BlogsList";
 

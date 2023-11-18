@@ -1,15 +1,17 @@
-import { Action } from "@remix-run/router";
-import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import Actions from "../../common/Actions";
 import { BlogData } from "../../common/blog";
 import { handleError } from "../../common/utils";
-import styles from "./BlogDetailsView.module.css";
+
 import Map from "./Map";
 import config from "../../common/config.json";
-import { useNavigate } from "react-router-dom";
 import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
+
 import buttonStyles from "../../common/styles/Button.module.css";
+import styles from "./BlogDetailsView.module.css";
 
 export type BlogDetailsViewProps = {
   id: string;
@@ -21,10 +23,11 @@ const DEFAULT_STATE = {
   results: null,
 };
 
-const BlogDetailsView = ({ id, ...props }: BlogDetailsViewProps) => {
+const BlogDetailsView = ({ id }: BlogDetailsViewProps) => {
   const navigate = useNavigate();
-  const [coord, setCoord] = useState({ lat: "37.7749", lng: "-122.4194" });
+
   const [state, setState] = useState(DEFAULT_STATE);
+  const [queryState, setQueryState] = useState("LOADING");
 
   useEffect(() => {
     async function getPost() {
@@ -57,24 +60,19 @@ const BlogDetailsView = ({ id, ...props }: BlogDetailsViewProps) => {
           error: err,
         }));
       });
-  }, []);
+  }, [id]);
 
-  const handleClick = (id: string, action: string) => {
-    if (action !== "remove") navigate(`/details/${id}/${action}`);
-  };
+  useEffect(() => {
+    let newQueryState = "LOADING";
+    if (!!state?.results) newQueryState = "SUCESS";
+    if (state?.loading) newQueryState = "LOADING";
+    if (!!state?.error) newQueryState = "ERROR";
+    setQueryState(newQueryState);
+  }, [state]);
 
-  let currenState = "LOADING";
-  if (!!state?.results) currenState = "SUCESS";
-  if (state?.loading) currenState = "LOADING";
-  if (!!state?.error) currenState = "ERROR";
-
-  const areCoordValid =
-    !isNaN(parseFloat(coord.lat)) && !isNaN(parseFloat(coord.lng));
-
-  console.log("stateeeeeeeeee", state, currenState);
   return (
     <>
-      {currenState === "SUCESS" && (
+      {queryState === "SUCESS" && (
         <div className={styles.blogdetailsviewMain}>
           <p className={styles.blogdetailsviewTile}>
             {(state?.results as BlogData | null)?.title}
@@ -88,26 +86,21 @@ const BlogDetailsView = ({ id, ...props }: BlogDetailsViewProps) => {
           <p style={{ width: "800px" }}>
             {(state?.results as BlogData | null)?.content}
           </p>
-          {areCoordValid && (
-            <div>
-              <Map
-                lat={parseFloat(
-                  (state?.results as BlogData | null)?.lat ?? "0"
-                )}
-                lng={parseFloat(
-                  (state?.results as BlogData | null)?.long ?? "0"
-                )}
-                onChangePos={() => {}}
-              />
-            </div>
-          )}
+
+          <div>
+            <Map
+              lat={parseFloat((state?.results as BlogData | null)?.lat ?? "0")}
+              lng={parseFloat((state?.results as BlogData | null)?.long ?? "0")}
+              onChangePos={() => {}}
+            />
+          </div>
         </div>
       )}
 
-      {currenState === "LOADING" && (
+      {queryState === "LOADING" && (
         <UserFeedback type={UserFeedbackTypes.INFO} message={"Loading...."} />
       )}
-      {currenState === "ERROR" && (
+      {queryState === "ERROR" && (
         <UserFeedback
           type={UserFeedbackTypes.ERROR}
           message={"An error has ocurred. Try again later"}
@@ -122,7 +115,7 @@ const BlogDetailsView = ({ id, ...props }: BlogDetailsViewProps) => {
         </button>
         <button
           className={buttonStyles.btnPrimary}
-          onClick={(e) => navigate(`/details/${id}/edit`)}
+          onClick={() => navigate(`/details/${id}/edit`)}
         >
           Edit
         </button>
