@@ -8,17 +8,30 @@ import { useEffect, useState } from "react";
 import config from "../common/config.json";
 import { handleError } from "../common/utils";
 import UserFeedback, { UserFeedbackTypes } from "../common/UserFeedback";
+import Actions from "../common/Actions";
 
 const DEFAULT_STATE = {
   loading: false,
   error: null,
   results: null,
 };
+
+const OPERATION_FEEDBACK_DEFAULT = {
+  type: UserFeedbackTypes.SUCCESS,
+  message: "",
+};
 //TODO: Default image
 const BlogsList = () => {
   const blogs: any = [];
   const navigate = useNavigate();
-  const [state, setState] = useState(DEFAULT_STATE);
+  const [state, setState] = useState<{
+    loading: boolean;
+    error: Error | null;
+    results: BlogData[] | null;
+  }>(DEFAULT_STATE);
+  const [operationFeedback, setOperationFeedback] = useState(
+    OPERATION_FEEDBACK_DEFAULT
+  );
 
   useEffect(() => {
     async function getPosts() {
@@ -53,6 +66,34 @@ const BlogsList = () => {
 
   const handleClick = (id: string, action: string) => {
     if (action !== "remove") navigate(`/details/${id}/${action}`);
+    else {
+      axios
+        .delete(`${config.END_POINT}/api/v1/posts/${id}`)
+        .then((response) => {
+          setOperationFeedback({
+            type: UserFeedbackTypes.SUCCESS,
+            message: "Post removed successfully!",
+          });
+          setTimeout(() => {
+            setOperationFeedback(OPERATION_FEEDBACK_DEFAULT);
+            const updatedResults = (state.results as any)?.filter(
+              (blog: BlogData) => blog.id !== id
+            );
+            setState((prevState) => ({
+              ...prevState,
+              results: updatedResults,
+            }));
+          }, 3000);
+          /* navigate(`/details/${response.data.id}/view`); */
+        })
+        .catch((err) => {
+          setOperationFeedback({
+            type: UserFeedbackTypes.ERROR,
+            message: "Operation failed!",
+          });
+          handleError(err);
+        });
+    }
   };
 
   let currenState = "LOADING";
@@ -64,45 +105,59 @@ const BlogsList = () => {
   if (!!state?.error) currenState = "ERROR";
 
   return (
-    <div className={styles.blogListViewMain}>
-      <button
-        className={styles.blogListViewAddButton}
-        onClick={(e) => navigate("/details/0/edit")}
-      >
-        + New Post
-      </button>
-      <div className={styles.blogListViewTitle}>BLOGS LIST</div>
-      <div className={styles.blogListViewContent}>
-        {currenState === "SUCESS" &&
-          (state?.results as BlogData[] | null)?.map((blog: BlogData) => {
-            return (
-              <ListItem
-                imageSrc={blog?.image_url ?? ""}
-                title={blog?.title}
-                onClick={(action) => {
-                  handleClick(blog.id, action);
-                }}
-              />
-            );
-          })}
+    <>
+      <div className={styles.blogListViewMain}>
+        <button
+          className={styles.blogListViewAddButton}
+          onClick={(e) => navigate("/details/0/edit")}
+        >
+          + New Post
+        </button>
+        <div className={styles.blogListViewTitle}>BLOGS LIST</div>
+        <div className={styles.blogListViewContent}>
+          {currenState === "SUCESS" &&
+            (state?.results as BlogData[] | null)?.map((blog: BlogData) => {
+              return (
+                <ListItem
+                  imageSrc={blog?.image_url ?? ""}
+                  title={blog?.title}
+                  onClick={(action) => {
+                    handleClick(blog.id, action);
+                  }}
+                />
+              );
+            })}
 
-        {currenState === "NODATA" && (
-          <UserFeedback
-            type={UserFeedbackTypes.INFO}
-            message={"NO DATA FOUND"}
-          />
-        )}
-        {currenState === "LOADING" && (
-          <UserFeedback type={UserFeedbackTypes.INFO} message={"Loading...."} />
-        )}
-        {currenState === "ERROR" && (
-          <UserFeedback
-            type={UserFeedbackTypes.ERROR}
-            message={"An error has ocurred. Try again later"}
-          />
-        )}
+          {currenState === "NODATA" && (
+            <UserFeedback
+              type={UserFeedbackTypes.INFO}
+              message={"NO DATA FOUND"}
+            />
+          )}
+          {currenState === "LOADING" && (
+            <UserFeedback
+              type={UserFeedbackTypes.INFO}
+              message={"Loading...."}
+            />
+          )}
+          {currenState === "ERROR" && (
+            <UserFeedback
+              type={UserFeedbackTypes.ERROR}
+              message={"An error has ocurred. Try again later"}
+            />
+          )}
+        </div>
       </div>
-    </div>
+      <Actions
+        classMain={styles.blogListViewActionsFeedback}
+        show={operationFeedback.message !== ""}
+      >
+        <UserFeedback
+          type={operationFeedback.type}
+          message={operationFeedback.message}
+        />
+      </Actions>
+    </>
   );
 };
 
