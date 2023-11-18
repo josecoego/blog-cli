@@ -9,7 +9,7 @@ import { handleError } from "../../common/utils";
 import Map from "./Map";
 import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
 
-import styles from "./BlogDetailsView.module.css";
+import styles from "./BlogDetails.module.css";
 import buttonStyles from "../../common/styles/Button.module.css";
 
 export type BlogDetailsEditProps = {

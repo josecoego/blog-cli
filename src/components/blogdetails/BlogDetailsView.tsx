@@ -11,7 +11,7 @@ import config from "../../common/config.json";
 import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
 
 import buttonStyles from "../../common/styles/Button.module.css";
-import styles from "./BlogDetailsView.module.css";
+import styles from "./BlogDetails.module.css";
 
 export type BlogDetailsViewProps = {
   id: string;
