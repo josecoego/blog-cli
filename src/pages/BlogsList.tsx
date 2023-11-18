@@ -117,7 +117,7 @@ const BlogsList = () => {
         </button>
         <div
           className={styles.blogListViewTitle}
-          style={{ marginBottom: "20px" }}
+          style={{ marginBottom: "20px", color: "rgb(112 125 207)" }}
         >
           BLOGS LIST
         </div>
