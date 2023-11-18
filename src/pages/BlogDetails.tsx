@@ -1,9 +1,10 @@
+import BlogDetailsEdit from "../components/blogdetails/BlogDetailsEdit";
 import BlogDetailsView from "../components/blogdetails/BlogDetailsView";
 
 const BlogDetails = () => {
   return (
     <div>
-      <BlogDetailsView
+      <BlogDetailsEdit
         id={""}
         title={"Madrid"}
         content={

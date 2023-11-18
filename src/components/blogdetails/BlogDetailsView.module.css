@@ -17,3 +17,13 @@
   align-items: center;
   column-gap: 40px;
 }
+
+/*Edit*/
+
+.blogDetailsEditImg {
+  display: flex;
+  flex-direction: column;
+  row-gap: 7px;
+  font-weight: normal;
+  font-size: 0.7em;
+}
