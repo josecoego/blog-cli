@@ -80,6 +80,7 @@ const BlogsList = () => {
   }, [state]);
 
   const handleClick = (id: string, action: string) => {
+    //Remove-Edit-View processing.
     if (action !== "remove") navigate(`/details/${id}/${action}`);
     else {
       axios

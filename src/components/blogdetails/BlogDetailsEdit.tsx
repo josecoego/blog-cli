@@ -44,6 +44,7 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
   const [state, setState] = useState(DEFAULT_STATE);
   const [errors, setErrors] = useState(DEFAULT_ERROR_STATE);
   const [queryFeedback, setQueryFeedback] = useState(DEFAULT_QUERY_FEEDBACK);
+  const [queryState, setQueryState] = useState("SUCCESS");
 
   useEffect(() => {
     if (id === "0") return;
@@ -78,7 +79,15 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
       });
   }, [id]);
 
+  useEffect(() => {
+    let newQueryState = "SUCCESS";
+    if (state?.loading) newQueryState = "LOADING";
+    if (!!state?.error) newQueryState = "ERROR";
+    setQueryState(newQueryState);
+  }, [state]);
+
   const handleClickSave = () => {
+    //validate input data (required fields...etc)
     setErrors(DEFAULT_ERROR_STATE);
     let isValid = true;
     if (!state.title) {
@@ -113,53 +122,41 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
     if (!isValid) return;
 
     const { loading, error, ...stateToSave } = state;
+    let httpMethod = "post";
+    let endPoint = "";
     if (id === "0") {
-      axios
-        .post(`${config.END_POINT}/api/v1/posts`, stateToSave)
-        .then((response) => {
-          setQueryFeedback({
-            type: UserFeedbackTypes.SUCCESS,
-            message: "Operation successful!",
-          });
-          setTimeout(() => {
-            setQueryFeedback(DEFAULT_QUERY_FEEDBACK);
-            navigate("/");
-          }, 3000);
-          /* navigate(`/details/${response.data.id}/view`); */
-        })
-        .catch((err) => {
-          handleError(err);
-        });
+      //Create Mode
+      httpMethod = "post";
+      endPoint = `${config.END_POINT}/api/v1/posts`;
     } else {
-      axios
-        .put(`${config.END_POINT}/api/v1/posts/${id}`, stateToSave)
-        .then((_res) => {
-          setQueryFeedback({
-            type: UserFeedbackTypes.SUCCESS,
-            message: "Operation successful!",
-          });
-          setTimeout(() => {
-            setQueryFeedback(DEFAULT_QUERY_FEEDBACK);
-            navigate("/");
-          }, 2000);
-        })
-        .catch((err) => {
-          setQueryFeedback({
-            type: UserFeedbackTypes.ERROR,
-            message: "Operation failed!",
-          });
-          handleError(err);
-        });
+      //Edit Mode
+      httpMethod = "put";
+      endPoint = `${config.END_POINT}/api/v1/posts/${id}`;
     }
+    (axios as any)
+      [httpMethod](endPoint, stateToSave)
+      .then(() => {
+        setQueryFeedback({
+          type: UserFeedbackTypes.SUCCESS,
+          message: "Operation successful!",
+        });
+        setTimeout(() => {
+          setQueryFeedback(DEFAULT_QUERY_FEEDBACK);
+          navigate("/");
+        }, 2000);
+      })
+      .catch((err: Error) => {
+        setQueryFeedback({
+          type: UserFeedbackTypes.ERROR,
+          message: "Operation failed!",
+        });
+        handleError(err);
+      });
   };
-
-  let currenState = "SUCESS";
-  if (state?.loading) currenState = "LOADING";
-  if (!!state?.error) currenState = "ERROR";
 
   return (
     <>
-      {currenState === "SUCESS" && (
+      {queryState === "SUCCESS" && (
         <div className={styles.blogdetailsviewMain}>
           <div>
             <input
@@ -286,10 +283,10 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
         </div>
       )}
 
-      {currenState === "LOADING" && (
+      {queryState === "LOADING" && (
         <UserFeedback type={UserFeedbackTypes.INFO} message={"Loading...."} />
       )}
-      {currenState === "ERROR" && (
+      {queryState === "ERROR" && (
         <UserFeedback
           type={UserFeedbackTypes.ERROR}
           message={"An error has ocurred. Try again later"}
