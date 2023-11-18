@@ -60,7 +60,6 @@ const BlogsList = () => {
     currenState = "SUCESS";
   if (!!state?.results && (state.results as BlogData[]).length <= 0)
     currenState = "NODATA";
-
   if (state?.loading) currenState = "LOADING";
   if (!!state?.error) currenState = "ERROR";
 
@@ -81,10 +80,16 @@ const BlogsList = () => {
             );
           })}
 
-        {state?.loading && (
+        {currenState === "NODATA" && (
+          <UserFeedback
+            type={UserFeedbackTypes.INFO}
+            message={"NO DATA FOUND"}
+          />
+        )}
+        {currenState === "LOADING" && (
           <UserFeedback type={UserFeedbackTypes.INFO} message={"Loading...."} />
         )}
-        {state?.error && (
+        {currenState === "ERROR" && (
           <UserFeedback
             type={UserFeedbackTypes.ERROR}
             message={"An error has ocurred. Try again later"}
