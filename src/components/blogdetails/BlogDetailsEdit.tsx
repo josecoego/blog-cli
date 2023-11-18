@@ -149,21 +149,26 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
     <>
       {currenState === "SUCESS" && (
         <div className={styles.blogdetailsviewMain}>
-          <input
-            type="text"
-            placeholder="Insert title (*)"
-            className={styles.blogdetailsviewTile}
-            onChange={(e) =>
-              setState((prevState) => ({ ...prevState, title: e.target.value }))
-            }
-            value={state?.title}
-          />
-          {errors.title !== "" && (
-            <UserFeedback
-              type={UserFeedbackTypes.ERROR}
-              message={errors.title}
+          <div>
+            <input
+              type="text"
+              placeholder="Insert title (*)"
+              className={styles.blogdetailsviewTile}
+              onChange={(e) =>
+                setState((prevState) => ({
+                  ...prevState,
+                  title: e.target.value,
+                }))
+              }
+              value={state?.title}
             />
-          )}
+            {errors.title !== "" && (
+              <UserFeedback
+                type={UserFeedbackTypes.ERROR}
+                message={errors.title}
+              />
+            )}
+          </div>
           <div className={styles.blogDetailsEditImg}>
             <input
               type="text"
@@ -184,10 +189,10 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
               width={"800px"}
             />
           </div>
-          <div>
+          <div style={{ marginBottom: "30px" }}>
             <textarea
               placeholder="Insert description (*)"
-              style={{ width: "800px", marginBottom: "30px" }}
+              style={{ width: "800px" }}
               rows={7}
               onChange={(e) =>
                 setState((prevState) => ({
@@ -196,45 +201,65 @@ const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
                 }))
               }
               value={state.content}
-            ></textarea>
+            />
+            {errors.content !== "" && (
+              <UserFeedback
+                type={UserFeedbackTypes.ERROR}
+                message={errors.content}
+              />
+            )}
           </div>
-          {errors.content !== "" && (
-            <UserFeedback
-              type={UserFeedbackTypes.ERROR}
-              message={errors.content}
-            />
-          )}
           <div>
-            <label>Click into the map to get coordinates:</label>
-            <br />
-            <input
-              disabled={true}
-              type="text"
-              placeholder="latitude"
-              className={styles.blogdetailsviewTile}
-              value={state.lat}
-            />
-            {errors.lat !== "" && (
-              <UserFeedback
-                type={UserFeedbackTypes.ERROR}
-                message={errors.lat}
+            <div
+              style={{
+                border: "1px solid #9ea6d7",
+                left: "0px",
+                borderRadius: "5px",
+                padding: "3px",
+              }}
+            >
+              <label style={{ color: "#9ea6d7", fontWeight: "bold" }}>
+                Click into the map to get coordinates:
+              </label>
+              <br />
+              <input
+                style={{ fontSize: "0.8em" }}
+                disabled={true}
+                type="text"
+                placeholder="latitude"
+                className={styles.blogdetailsviewTile}
+                value={state.lat}
               />
-            )}
-            <br />
-            <input
-              disabled={true}
-              type="text"
-              placeholder="longitude"
-              className={styles.blogdetailsviewTile}
-              value={state.long}
-            />
-            {errors.long !== "" && (
-              <UserFeedback
-                type={UserFeedbackTypes.ERROR}
-                message={errors.long}
+              {errors.lat !== "" && (
+                <UserFeedback
+                  type={UserFeedbackTypes.ERROR}
+                  message={errors.lat}
+                />
+              )}
+              <br />
+              <input
+                style={{ fontSize: "0.8em" }}
+                disabled={true}
+                type="text"
+                placeholder="longitude"
+                className={styles.blogdetailsviewTile}
+                value={state.long}
               />
-            )}
+              {errors.long !== "" && (
+                <UserFeedback
+                  type={UserFeedbackTypes.ERROR}
+                  message={errors.long}
+                />
+              )}
+            </div>
             <Map
+              styles={{
+                position: "relative",
+                height: "400px",
+                width: "800px",
+                top: "0px",
+                left: "-260px",
+              }}
               lat={parseFloat(state.lat)}
               lng={parseFloat(state.long)}
               onChangePos={({ lat, lng }: { lat: number; lng: number }) => {

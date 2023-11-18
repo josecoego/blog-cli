@@ -9,18 +9,26 @@ export type MapCustomProps = {
   lat: number;
   lng: number;
   onChangePos: ({ lat, lng }: { lat: number; lng: number }) => void;
+  styles?: React.CSSProperties;
 };
 
 const MapContainer = ({
   lat,
   lng,
+  styles = {
+    position: "relative",
+    height: "400px",
+    width: "800px",
+    top: "0px",
+    left: "-400px",
+  },
   onChangePos,
   ...props
 }: MapContainerProps & MapCustomProps) => {
   const mapStyles: React.CSSProperties = {
     position: "relative",
-    height: "400px",
-    width: "800px",
+    height: "100px",
+    width: "200px",
     top: "0px",
     left: "-400px",
   };
@@ -36,7 +44,7 @@ const MapContainer = ({
       <Map
         google={props.google}
         zoom={14}
-        style={mapStyles}
+        style={styles}
         initialCenter={initialPosition}
         onClick={(mapProps: any, map: any, clickEvent: any) => {
           onChangePos({
