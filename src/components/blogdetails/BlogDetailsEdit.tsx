@@ -1,70 +1,233 @@
 import { Action } from "@remix-run/router";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Actions from "../../common/Actions";
 import { BlogData } from "../../common/blog";
+import { handleError } from "../../common/utils";
 import styles from "./BlogDetailsView.module.css";
 import Map from "./Map";
+import config from "../../common/config.json";
+import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
 
-const BlogDetailsEdit = (props: BlogData) => {
-  const { image_url, title, content, lat, long } = props ?? {};
-  const [coord, setCoord] = useState({ lat: "37.7749", lng: "-122.4194" });
+export type BlogDetailsEditProps = {
+  id: string;
+};
 
-  const areCoordValid =
-    !isNaN(parseFloat(coord.lat)) && !isNaN(parseFloat(coord.lng));
+const DEFAULT_STATE = {
+  image_url: "",
+  title: "",
+  content: "",
+  lat: "37.7749",
+  long: "-122.4194",
+  loading: false,
+  error: null,
+};
+
+const DEFAULT_ERROR_STATE = {
+  image_url: "",
+  title: "",
+  content: "",
+  lat: "",
+  long: "",
+};
+
+const BlogDetailsEdit = ({ id }: BlogDetailsEditProps) => {
+  /*  const [coord, setCoord] = useState({ lat: "37.7749", lng: "-122.4194" }); */
+  const navigate = useNavigate();
+  const [state, setState] = useState(DEFAULT_STATE);
+  const [errors, setErrors] = useState(DEFAULT_ERROR_STATE);
+  useEffect(() => {
+    async function getPost() {
+      try {
+        const response = await axios.get(
+          `${config.END_POINT}/api/v1/posts/${id}`
+        );
+        return response?.data ?? [];
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    setState((prevState) => ({ ...prevState, loading: true }));
+    getPost()
+      .then((data) => {
+        console.log("dataaaaaaa", data);
+        setState((prevState) => ({
+          ...prevState,
+          ...data,
+          loading: false,
+          error: null,
+        }));
+      })
+      .catch((err) => {
+        handleError(err);
+        setState((prevState) => ({
+          ...prevState,
+          loading: false,
+          error: err,
+        }));
+      });
+  }, []);
+
+  const handleClickSave = () => {
+    setErrors(DEFAULT_ERROR_STATE);
+    let isValid = true;
+    if (!state.title) {
+      isValid = false;
+      setErrors((prevErr) => ({
+        ...prevErr,
+
+        title: "Title is required",
+      }));
+    }
+    if (!state.content) {
+      isValid = false;
+      setErrors((prevErr) => ({
+        ...prevErr,
+
+        content: "Content is required",
+      }));
+    }
+    if (isNaN(parseFloat(state.lat))) {
+      isValid = false;
+      setErrors((prevErr) => ({
+        ...prevErr,
+        lat: "Latitude is not valid",
+      }));
+    }
+    if (isNaN(parseFloat(state.long))) {
+      isValid = false;
+      setErrors((prevErr) => ({
+        ...prevErr,
+        long: "Longitude is not valid",
+      }));
+    }
+
+    if (!isValid) return;
+  };
+  /* const areCoordValid =
+    !isNaN(parseFloat(coord.lat)) && !isNaN(parseFloat(coord.lng)); */
+  let currenState = "SUCESS";
+  if (state?.loading) currenState = "LOADING";
+  if (!!state?.error) currenState = "ERROR";
+
+  console.log("stateeeeeeeeDittttt", state);
   return (
     <>
-      <div className={styles.blogdetailsviewMain}>
-        <input
-          type="text"
-          placeholder="Insert title (*)"
-          className={styles.blogdetailsviewTile}
-          value={title}
-        />
-        <div className={styles.blogDetailsEditImg}>
+      {currenState === "SUCESS" && (
+        <div className={styles.blogdetailsviewMain}>
           <input
             type="text"
-            placeholder="Insert image url"
+            placeholder="Insert title (*)"
             className={styles.blogdetailsviewTile}
-            value={
-              "https://c2.staticflickr.com/2/1269/4670777817_d657cd9819_b.jpg"
+            onChange={(e) =>
+              setState((prevState) => ({ ...prevState, title: e.target.value }))
             }
+            value={state?.title}
           />
-          <img src={image_url} alt="" height={"500px"} width={"800px"} />
+          {errors.title !== "" && (
+            <UserFeedback
+              type={UserFeedbackTypes.ERROR}
+              message={errors.title}
+            />
+          )}
+          <div className={styles.blogDetailsEditImg}>
+            <input
+              type="text"
+              placeholder="Insert image url"
+              className={styles.blogdetailsviewTile}
+              onChange={(e) =>
+                setState((prevState) => ({
+                  ...prevState,
+                  image_url: e.target.value,
+                }))
+              }
+              value={state.image_url}
+            />
+            <img
+              src={state.image_url}
+              alt=""
+              height={"500px"}
+              width={"800px"}
+            />
+          </div>
+          <textarea
+            placeholder="Insert description (*)"
+            style={{ width: "800px", marginBottom: "30px" }}
+            rows={7}
+            onChange={(e) =>
+              setState((prevState) => ({
+                ...prevState,
+                content: e.target.value,
+              }))
+            }
+            value={state.content}
+          ></textarea>
+          {errors.content !== "" && (
+            <UserFeedback
+              type={UserFeedbackTypes.ERROR}
+              message={errors.content}
+            />
+          )}
+          <div>
+            <label>Click into the map to get coordinates:</label>
+            <br />
+            <input
+              disabled={true}
+              type="text"
+              placeholder="latitude"
+              className={styles.blogdetailsviewTile}
+              value={state.lat}
+            />
+            {errors.lat !== "" && (
+              <UserFeedback
+                type={UserFeedbackTypes.ERROR}
+                message={errors.lat}
+              />
+            )}
+            <br />
+            <input
+              disabled={true}
+              type="text"
+              placeholder="longitude"
+              className={styles.blogdetailsviewTile}
+              value={state.long}
+            />
+            {errors.long !== "" && (
+              <UserFeedback
+                type={UserFeedbackTypes.ERROR}
+                message={errors.long}
+              />
+            )}
+            <Map
+              lat={parseFloat(state.lat)}
+              lng={parseFloat(state.long)}
+              onChangePos={({ lat, lng }: { lat: number; lng: number }) => {
+                setState((prevState) => ({
+                  ...prevState,
+                  lat: lat.toString(),
+                  long: lng.toString(),
+                }));
+              }}
+            />
+          </div>
         </div>
-        <textarea style={{ width: "800px", marginBottom: "30px" }} rows={7}>
-          {content}
-        </textarea>
+      )}
 
-        <div>
-          <label>Insert lon/lat manually o click into the map:</label>
-          <br />
-          <input
-            type="text"
-            placeholder="Insert lat or click into the map"
-            className={styles.blogdetailsviewTile}
-            value={""}
-          />
-          <br />
-          <input
-            type="text"
-            placeholder="Insert long or click into the map"
-            className={styles.blogdetailsviewTile}
-            value={""}
-          />
-
-          <Map
-            lat={parseFloat(coord.lat)}
-            lng={parseFloat(coord.lng)}
-            onChangePos={({ lat, lng }: { lat: number; lng: number }) => {
-              setCoord({ lat: lat.toString(), lng: lng.toString() });
-            }}
-          />
-        </div>
-      </div>
+      {currenState === "LOADING" && (
+        <UserFeedback type={UserFeedbackTypes.INFO} message={"Loading...."} />
+      )}
+      {currenState === "ERROR" && (
+        <UserFeedback
+          type={UserFeedbackTypes.ERROR}
+          message={"An error has ocurred. Try again later"}
+        />
+      )}
 
       <Actions classMain={styles.blogDetailsViewDefaultActions} show={true}>
-        <button onClick={(e) => window.open("/")}>Save</button>
-        <button>Cancel/Back</button>
+        <button onClick={(e) => handleClickSave()}>Save</button>
+        <button onClick={(e) => navigate("/")}>Cancel/Back</button>
       </Actions>
     </>
   );

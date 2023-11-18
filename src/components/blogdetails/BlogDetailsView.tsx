@@ -21,11 +21,6 @@ const DEFAULT_STATE = {
 };
 
 const BlogDetailsView = ({ id, ...props }: BlogDetailsViewProps) => {
-  const image_url = "",
-    title = "",
-    content = "",
-    lat = "",
-    long = "";
   const navigate = useNavigate();
   const [coord, setCoord] = useState({ lat: "37.7749", lng: "-122.4194" });
   const [state, setState] = useState(DEFAULT_STATE);
@@ -80,7 +75,9 @@ const BlogDetailsView = ({ id, ...props }: BlogDetailsViewProps) => {
     <>
       {currenState === "SUCESS" && (
         <div className={styles.blogdetailsviewMain}>
-          <p className={styles.blogdetailsviewTile}>{title}</p>
+          <p className={styles.blogdetailsviewTile}>
+            {(state?.results as BlogData | null)?.title}
+          </p>
           <img
             src={(state?.results as BlogData | null)?.image_url}
             alt=""
@@ -117,7 +114,7 @@ const BlogDetailsView = ({ id, ...props }: BlogDetailsViewProps) => {
       )}
       <Actions classMain={styles.blogDetailsViewDefaultActions} show={true}>
         <button onClick={(e) => navigate("/")}>Back</button>
-        <button>Edit</button>
+        <button onClick={(e) => navigate(`/details/${id}/edit`)}>Edit</button>
       </Actions>
     </>
   );
