@@ -87,7 +87,7 @@ const BlogsList = () => {
     else {
       axios
         .delete(`${config.END_POINT}/api/v1/posts/${id}`)
-        .then((response) => {
+        .then((_res) => {
           setQueryFeedback({
             type: UserFeedbackTypes.SUCCESS,
             message: "Post removed successfully!",
