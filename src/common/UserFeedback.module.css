@@ -1,0 +1,11 @@
+.userfeedbackInfo {
+  color: blue;
+}
+
+.userfeedbackError {
+  color: red;
+}
+
+.userfeedbackSuccess {
+  color: green;
+}
