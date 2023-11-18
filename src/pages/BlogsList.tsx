@@ -6,8 +6,10 @@ import { BlogData } from "../common/blog";
 import ListItem from "../components/blogList/ListItem";
 import { useEffect, useState } from "react";
 import config from "../common/config.json";
-import UserFeedback, { UserFeedbackTypes } from "../common/UserFeedback";
-import Actions from "../common/Actions";
+import UserFeedback, {
+  UserFeedbackTypes,
+} from "../common/components/UserFeedback";
+import Actions from "../common/components/Actions";
 import { handleError } from "../common/utils";
 
 import styles from "../components/blogList/BlogListView.module.css";

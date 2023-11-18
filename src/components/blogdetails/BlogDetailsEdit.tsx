@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 
 import config from "../../common/config.json";
 
-import Actions from "../../common/Actions";
+import Actions from "../../common/components/Actions";
 import { handleError } from "../../common/utils";
 import Map from "./Map";
-import UserFeedback, { UserFeedbackTypes } from "../../common/UserFeedback";
+import UserFeedback, {
+  UserFeedbackTypes,
+} from "../../common/components/UserFeedback";
 
 import styles from "./BlogDetails.module.css";
 import buttonStyles from "../../common/styles/Button.module.css";
